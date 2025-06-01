@@ -1,0 +1,133 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Get version
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      
+    - name: Create Release Notes
+      id: release_notes
+      run: |
+        echo "RELEASE_NOTES<<EOF" >> $GITHUB_OUTPUT
+        echo "## 🎉 版本 ${{ steps.get_version.outputs.VERSION }} 發布" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo "### 📥 下載方式" >> $GITHUB_OUTPUT
+        echo "1. 下載 \`ClearClipboard.bat\` 檔案" >> $GITHUB_OUTPUT
+        echo "2. 右鍵選擇「以系統管理員身分執行」" >> $GITHUB_OUTPUT
+        echo "3. 按照提示完成安裝" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo "### ✨ 主要功能" >> $GITHUB_OUTPUT
+        echo "- 🖱️ 右鍵選單整合" >> $GITHUB_OUTPUT
+        echo "- ⚡ 一鍵清空剪貼簿" >> $GITHUB_OUTPUT
+        echo "- 🛠️ 自動安裝部署" >> $GITHUB_OUTPUT
+        echo "- 🔧 完整解除安裝支援" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo "### 📋 系統需求" >> $GITHUB_OUTPUT
+        echo "- Windows 7/8/8.1/10/11" >> $GITHUB_OUTPUT
+        echo "- .NET Framework 4.0+" >> $GITHUB_OUTPUT
+        echo "- 管理員權限（安裝時）" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo "### 📝 更新內容" >> $GITHUB_OUTPUT
+        echo "請參考 [CHANGELOG.md](CHANGELOG.md) 查看詳細更新內容。" >> $GITHUB_OUTPUT
+        echo "" >> $GITHUB_OUTPUT
+        echo "### 🆘 需要協助？" >> $GITHUB_OUTPUT
+        echo "- 📖 [使用說明](README.md)" >> $GITHUB_OUTPUT
+        echo "- 🔧 [疑難排解](docs/troubleshooting.md)" >> $GITHUB_OUTPUT
+        echo "- 🐛 [回報問題](https://github.com/${{ github.repository }}/issues)" >> $GITHUB_OUTPUT
+        echo "EOF" >> $GITHUB_OUTPUT
+        
+    - name: Create release package
+      run: |
+        mkdir -p release-package
+        cp ClearClipboard.bat release-package/
+        cp tools/uninstall.bat release-package/
+        cp README.md release-package/
+        cp LICENSE release-package/
+        cp CHANGELOG.md release-package/
+        
+        # 建立安裝說明
+        cat > release-package/安裝說明.txt << 'EOF'
+        Windows剪貼簿一鍵清理工具 - 安裝說明
+        ==========================================
+        
+        📋 安裝步驟：
+        1. 右鍵點選「ClearClipboard.bat」
+        2. 選擇「以系統管理員身分執行」
+        3. 在UAC提示中點選「是」
+        4. 等待安裝完成提示
+        
+        ✅ 使用方法：
+        - 在任何檔案上右鍵 → 「一鍵清理剪貼簿」
+        - 在桌面空白處右鍵 → 「一鍵清理剪貼簿」
+        
+        🗑️ 解除安裝：
+        - 以管理員身分執行「uninstall.bat」
+        
+        📞 需要協助？
+        - 查看 README.md 檔案
+        - 或到 GitHub 回報問題
+        
+        ==========================================
+        版本：${{ steps.get_version.outputs.VERSION }}
+        更新時間：$(date '+%Y年%m月%d日')
+        EOF
+        
+        # 建立壓縮檔
+        cd release-package
+        zip -r ../clipboard-clear-tool-${{ steps.get_version.outputs.VERSION }}.zip .
+        cd ..
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.get_version.outputs.VERSION }}
+        release_name: Windows剪貼簿一鍵清理工具 ${{ steps.get_version.outputs.VERSION }}
+        body: ${{ steps.release_notes.outputs.RELEASE_NOTES }}
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release Asset - ZIP Package
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./clipboard-clear-tool-${{ steps.get_version.outputs.VERSION }}.zip
+        asset_name: clipboard-clear-tool-${{ steps.get_version.outputs.VERSION }}.zip
+        asset_content_type: application/zip
+        
+    - name: Upload Release Asset - Main Script
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./ClearClipboard.bat
+        asset_name: ClearClipboard.bat
+        asset_content_type: application/octet-stream
+        
+    - name: Upload Release Asset - Uninstaller
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./tools/uninstall.bat
+        asset_name: uninstall.bat
+        asset_content_type: application/octet-stream

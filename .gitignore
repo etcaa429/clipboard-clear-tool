@@ -1,0 +1,111 @@
+# ==========================================
+# Windows剪貼簿清理工具 - Git忽略檔案
+# ==========================================
+
+# 編譯產生的檔案
+*.exe
+*.dll
+*.pdb
+*.obj
+*.lib
+*.exp
+
+# 日誌檔案
+*.log
+ClipInstaller.log
+ClipUninstaller.log
+
+# 暫存檔案
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+~*
+
+# C# 編譯暫存檔
+*.cs
+ClipboardClear_*.cs
+
+# Windows 系統檔案
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# 編輯器檔案
+.vscode/
+.vs/
+.idea/
+.vscode*.*
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# JetBrains IDEs
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Visual Studio
+.vs/
+bin/
+obj/
+packages/
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# 測試覆蓋率檔案
+*.coverage
+*.coveragexml
+
+# 效能測試檔案
+*.psess
+*.vsp
+*.vspx
+*.sap
+
+# ReSharper
+_ReSharper*/
+*.[Rr]e[Ss]harper
+*.DotSettings.user
+
+# 暫存資料夾
+temp/
+tmp/
+build/
+dist/
+
+# Mac OS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# 備份檔案
+*.orig
+*.rej
+*.bak
+
+# 壓縮檔案 (非必要時不上傳)
+*.zip
+*.rar
+*.7z
+*.tar.gz
+
+# 個人設定檔案
+config.local.*
+settings.local.*
