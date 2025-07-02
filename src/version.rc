@@ -1,0 +1,34 @@
+#include <windows.h>
+
+// 圖示資源
+IDI_APP_ICON ICON DISCARDABLE "ClipClear.ico"
+
+// 版本資訊資源
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION     0,1,0,0
+ PRODUCTVERSION  0,1,0,0
+ FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+ FILEFLAGS       0x0L
+ FILEOS          VOS_NT_WINDOWS32
+ FILETYPE        VFT_APP
+ FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"  // 語言和代碼頁
+        BEGIN
+            VALUE "CompanyName",      "fan198202@gmail.com"
+            VALUE "FileDescription",  "Click Clip Board Clear Tool (.NET 4.8.1) for Windows System ContextMenu"
+            VALUE "FileVersion",      "0.1.0.0"
+            VALUE "InternalName",     "ClipClear.exe"
+            VALUE "LegalCopyright",   "Copyright (C) 2025"
+            VALUE "OriginalFilename", "ClipClear.exe"
+            VALUE "ProductName",      "One Click Clip Board Clear (.NET 4.8.1)"
+            VALUE "ProductVersion",   "0.1.0.0"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200  // 英語(美國) & Unicode
+    END
+END
